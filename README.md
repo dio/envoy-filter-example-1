@@ -1,6 +1,6 @@
 ## envoy filter example
 
-This project currently focuses on providing http filter examples, in three types
+This project currently focuses on providing http filter examples, in two types
 of it:
 
 #### sync
