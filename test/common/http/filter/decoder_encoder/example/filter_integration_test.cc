@@ -2,26 +2,26 @@
 #include "test/integration/utility.h"
 
 namespace Envoy {
-class ExampleEncoderDecoderFilterIntegrationTest
+class ExampleDecoderEncoderFilterIntegrationTest
     : public HttpIntegrationTest,
       public testing::TestWithParam<Network::Address::IpVersion> {
 public:
-  ExampleEncoderDecoderFilterIntegrationTest()
+  ExampleDecoderEncoderFilterIntegrationTest()
       : HttpIntegrationTest(Http::CodecClient::Type::HTTP1, GetParam()) {}
 
   void SetUp() override { initialize(); }
 
   void initialize() override {
     config_helper_.addFilter(
-        "{ name: my.example.encoder_decoder, config: { key: via, val: example-encoder-decoder } }");
+        "{ name: my.example.decoder_encoder, config: { key: via, val: example-decoder-encoder } }");
     HttpIntegrationTest::initialize();
   }
 };
 
-INSTANTIATE_TEST_CASE_P(IpVersions, ExampleEncoderDecoderFilterIntegrationTest,
+INSTANTIATE_TEST_CASE_P(IpVersions, ExampleDecoderEncoderFilterIntegrationTest,
                         testing::ValuesIn(TestEnvironment::getIpVersionsForTest()));
 
-TEST_P(ExampleEncoderDecoderFilterIntegrationTest, Test1) {
+TEST_P(ExampleDecoderEncoderFilterIntegrationTest, Test1) {
   Http::TestHeaderMapImpl headers{{":method", "GET"}, {":path", "/"}, {":authority", "host"}};
 
   IntegrationCodecClientPtr codec_client;
@@ -36,13 +36,13 @@ TEST_P(ExampleEncoderDecoderFilterIntegrationTest, Test1) {
   request_stream->waitForEndStream(*dispatcher_);
   response->waitForEndStream();
 
-  EXPECT_STREQ("example-encoder-decoder",
+  EXPECT_STREQ("example-decoder-encoder",
                request_stream->headers().get(Http::LowerCaseString("via"))->value().c_str());
 
   codec_client->close();
 }
 
-TEST_P(ExampleEncoderDecoderFilterIntegrationTest, Test2) {
+TEST_P(ExampleDecoderEncoderFilterIntegrationTest, Test2) {
   codec_client_ = makeHttpConnection(makeClientConnection((lookupPort("http"))));
 
   Http::TestHeaderMapImpl request_headers{
@@ -59,7 +59,7 @@ TEST_P(ExampleEncoderDecoderFilterIntegrationTest, Test2) {
   EXPECT_STREQ("200", response_->headers().Status()->value().c_str());
   EXPECT_EQ(0U, response_->body().size());
   EXPECT_NE(response_->headers().get(Http::LowerCaseString("via")), nullptr);
-  EXPECT_STREQ("example-encoder-decoder",
+  EXPECT_STREQ("example-decoder-encoder",
                response_->headers().get(Http::LowerCaseString("via"))->value().c_str());
 }
 } // namespace Envoy
