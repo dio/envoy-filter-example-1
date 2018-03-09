@@ -1,1 +1,0 @@
-`client{send:json} -> filter -> {recv:xml}upstream`

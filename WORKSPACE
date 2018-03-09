@@ -1,8 +1,13 @@
-workspace(name = "pulla")
+workspace(name = "envoy_filter_example")
 
-local_repository(
+load('@bazel_tools//tools/build_defs/repo:git.bzl', 'git_repository')
+
+ENVOY_SHA = "e9494ae6bcfcca2d8f2f96c36e38507bd0890d51"  # Mar 9, 2018 - Support for gRPC accesslog unauthorized respose flag. (#2756)
+
+http_archive(
     name = "envoy",
-    path = "envoy",
+    strip_prefix = "envoy-" + ENVOY_SHA,
+    url = "https://github.com/envoyproxy/envoy/archive/" + ENVOY_SHA + ".zip",
 )
 
 load("@envoy//bazel:repositories.bzl", "envoy_dependencies")

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package my.api.v1.transcoder;
+
+import "validate/validate.proto";
+
+// [#protodoc-title: Example transcoder]
+// Example transcoder.
+message Example {
+    string key = 1 [(validate.rules).string.min_bytes = 1];
+    string val = 2 [(validate.rules).string.min_bytes = 1];
+}

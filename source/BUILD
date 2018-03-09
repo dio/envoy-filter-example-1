@@ -11,9 +11,9 @@ envoy_cc_binary(
     name = "envoy",
     repository = "@envoy",
     deps = [
-        "//source/http/decoder/json_to_xml:filter_config",
-        "//source/http/encoder/xml_to_json:filter_config",
-        "//source/http/transcoder/json_xml:filter_config",
+        "//source/common/http/filter/decoder/example:filter_config",
+        "//source/common/http/filter/encoder/example:filter_config",
+        "//source/common/http/filter/transcoder/example:filter_config",
         "@envoy//source/exe:envoy_main_entry_lib",
     ],
 )
