@@ -4,15 +4,15 @@
 
 #include "server/config/network/http_connection_manager.h"
 
-#include "source/common/http/filter/transcoder/example/filter.pb.h"
+#include "source/common/http/filter/encoder_decoder/example/filter.pb.h"
 
 namespace Envoy {
 namespace Http {
 
-class ExampleTranscoderFilterConfig {
+class ExampleEncoderDecoderFilterConfig {
 public:
-  ExampleTranscoderFilterConfig(
-      const my::api::v1::transcoder::Example& proto_config);
+  ExampleEncoderDecoderFilterConfig(
+      const my::api::v1::encoder_decoder::Example& proto_config);
 
   const std::string& key() const { return key_; }
   const std::string& val() const { return val_; }
@@ -22,12 +22,12 @@ private:
   const std::string val_;
 };
 
-typedef std::shared_ptr<ExampleTranscoderFilterConfig> ExampleTranscoderFilterConfigSharedPtr;
+typedef std::shared_ptr<ExampleEncoderDecoderFilterConfig> ExampleEncoderDecoderFilterConfigSharedPtr;
 
-class ExampleTranscoderFilter : public StreamFilter {
+class ExampleEncoderDecoderFilter : public StreamFilter {
 public:
-  ExampleTranscoderFilter(ExampleTranscoderFilterConfigSharedPtr);
-  ~ExampleTranscoderFilter();
+  ExampleEncoderDecoderFilter(ExampleEncoderDecoderFilterConfigSharedPtr);
+  ~ExampleEncoderDecoderFilter();
 
   // Http::StreamFilterBase
   void onDestroy() override;
@@ -46,7 +46,7 @@ public:
   void setEncoderFilterCallbacks(StreamEncoderFilterCallbacks&) override;
 
 private:
-  const ExampleTranscoderFilterConfigSharedPtr config_;
+  const ExampleEncoderDecoderFilterConfigSharedPtr config_;
   StreamDecoderFilterCallbacks* decoder_callbacks_;
   StreamEncoderFilterCallbacks* encoder_callbacks_;
 

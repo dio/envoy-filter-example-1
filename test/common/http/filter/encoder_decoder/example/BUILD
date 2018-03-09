@@ -10,7 +10,7 @@ envoy_cc_test(
     srcs = ["filter_integration_test.cc"],
     repository = "@envoy",
     deps = [
-        "//source/common/http/filter/transcoder/example:filter_config",
+        "//source/common/http/filter/encoder_decoder/example:filter_config",
         "@envoy//test/integration:http_integration_lib",
     ],
 )

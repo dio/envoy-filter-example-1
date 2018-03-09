@@ -2,25 +2,26 @@
 #include "test/integration/utility.h"
 
 namespace Envoy {
-class ExampleTranscoderFilterIntegrationTest
+class ExampleEncoderDecoderFilterIntegrationTest
     : public HttpIntegrationTest,
       public testing::TestWithParam<Network::Address::IpVersion> {
 public:
-  ExampleTranscoderFilterIntegrationTest()
+  ExampleEncoderDecoderFilterIntegrationTest()
       : HttpIntegrationTest(Http::CodecClient::Type::HTTP1, GetParam()) {}
 
   void SetUp() override { initialize(); }
 
   void initialize() override {
-    config_helper_.addFilter("{ name: my.example.transcoder, config: { key: via, val: example-transcoder } }");
+    config_helper_.addFilter(
+        "{ name: my.example.encoder_decoder, config: { key: via, val: example-encoder-decoder } }");
     HttpIntegrationTest::initialize();
   }
 };
 
-INSTANTIATE_TEST_CASE_P(IpVersions, ExampleTranscoderFilterIntegrationTest,
+INSTANTIATE_TEST_CASE_P(IpVersions, ExampleEncoderDecoderFilterIntegrationTest,
                         testing::ValuesIn(TestEnvironment::getIpVersionsForTest()));
 
-TEST_P(ExampleTranscoderFilterIntegrationTest, Test1) {
+TEST_P(ExampleEncoderDecoderFilterIntegrationTest, Test1) {
   Http::TestHeaderMapImpl headers{{":method", "GET"}, {":path", "/"}, {":authority", "host"}};
 
   IntegrationCodecClientPtr codec_client;
@@ -35,13 +36,13 @@ TEST_P(ExampleTranscoderFilterIntegrationTest, Test1) {
   request_stream->waitForEndStream(*dispatcher_);
   response->waitForEndStream();
 
-  EXPECT_STREQ("example-transcoder",
+  EXPECT_STREQ("example-encoder-decoder",
                request_stream->headers().get(Http::LowerCaseString("via"))->value().c_str());
 
   codec_client->close();
 }
 
-TEST_P(ExampleTranscoderFilterIntegrationTest, Test2) {
+TEST_P(ExampleEncoderDecoderFilterIntegrationTest, Test2) {
   codec_client_ = makeHttpConnection(makeClientConnection((lookupPort("http"))));
 
   Http::TestHeaderMapImpl request_headers{
@@ -58,6 +59,7 @@ TEST_P(ExampleTranscoderFilterIntegrationTest, Test2) {
   EXPECT_STREQ("200", response_->headers().Status()->value().c_str());
   EXPECT_EQ(0U, response_->body().size());
   EXPECT_NE(response_->headers().get(Http::LowerCaseString("via")), nullptr);
-  EXPECT_STREQ("example-transcoder", response_->headers().get(Http::LowerCaseString("via"))->value().c_str());
+  EXPECT_STREQ("example-encoder-decoder",
+               response_->headers().get(Http::LowerCaseString("via"))->value().c_str());
 }
 } // namespace Envoy

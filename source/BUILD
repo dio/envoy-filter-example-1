@@ -13,7 +13,7 @@ envoy_cc_binary(
     deps = [
         "//source/common/http/filter/decoder/example:filter_config",
         "//source/common/http/filter/encoder/example:filter_config",
-        "//source/common/http/filter/transcoder/example:filter_config",
+        "//source/common/http/filter/encoder_decoder/example:filter_config",
         "@envoy//source/exe:envoy_main_entry_lib",
     ],
 )
