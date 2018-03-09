@@ -1,23 +1,23 @@
 #include <string>
 
-#include "common/http/filter/encoder_decoder/example/filter.h"
+#include "common/http/filter/decoder_encoder/example/filter.h"
 
 #include "common/config/json_utility.h"
 #include "envoy/registry/registry.h"
 
-#include "source/common/http/filter/encoder_decoder/example/filter.pb.h"
-#include "source/common/http/filter/encoder_decoder/example/filter.pb.validate.h"
+#include "source/common/http/filter/decoder_encoder/example/filter.pb.h"
+#include "source/common/http/filter/decoder_encoder/example/filter.pb.validate.h"
 
 namespace Envoy {
 namespace Server {
 namespace Configuration {
 
-class ExampleEncoderDecoderFilterConfig : public NamedHttpFilterConfigFactory {
+class ExampleDecoderEncoderFilterConfig : public NamedHttpFilterConfigFactory {
 public:
   HttpFilterFactoryCb createFilterFactory(const Json::Object& json_config, const std::string&,
                                           FactoryContext& context) override {
 
-    my::api::v1::encoder_decoder::Example proto_config;
+    my::api::v1::decoder_encoder::Example proto_config;
     translate(json_config, proto_config);
 
     return createFilter(proto_config, context);
@@ -28,34 +28,34 @@ public:
                                                    FactoryContext& context) override {
 
     return createFilter(Envoy::MessageUtil::downcastAndValidate<
-                            const my::api::v1::encoder_decoder::Example&>(proto_config),
+                            const my::api::v1::decoder_encoder::Example&>(proto_config),
                         context);
   }
 
   ProtobufTypes::MessagePtr createEmptyConfigProto() override {
-    return ProtobufTypes::MessagePtr{new my::api::v1::encoder_decoder::Example()};
+    return ProtobufTypes::MessagePtr{new my::api::v1::decoder_encoder::Example()};
   }
 
-  std::string name() override { return "my.example.encoder_decoder"; }
+  std::string name() override { return "my.example.decoder_encoder"; }
 
 private:
   HttpFilterFactoryCb
-  createFilter(const my::api::v1::encoder_decoder::Example& proto_config,
+  createFilter(const my::api::v1::decoder_encoder::Example& proto_config,
                FactoryContext& context) {
 
-    Http::ExampleEncoderDecoderFilterConfigSharedPtr config =
-        std::make_shared<Http::ExampleEncoderDecoderFilterConfig>(
-            Http::ExampleEncoderDecoderFilterConfig(proto_config));
+    Http::ExampleDecoderEncoderFilterConfigSharedPtr config =
+        std::make_shared<Http::ExampleDecoderEncoderFilterConfig>(
+            Http::ExampleDecoderEncoderFilterConfig(proto_config));
 
     return [&context, config](Http::FilterChainFactoryCallbacks& callbacks) -> void {
-      auto filter = new Http::ExampleEncoderDecoderFilter(config);
+      auto filter = new Http::ExampleDecoderEncoderFilter(config);
       callbacks.addStreamFilter(Http::StreamFilterSharedPtr{filter});
     };
   }
 
   void
   translate(const Json::Object& json_config,
-                                   my::api::v1::encoder_decoder::Example& proto_config) {
+                                   my::api::v1::decoder_encoder::Example& proto_config) {
 
     // normally we want to validate the json_config againts a defined
     // json-schema here.
@@ -64,7 +64,7 @@ private:
   }
 };
 
-static Registry::RegisterFactory<ExampleEncoderDecoderFilterConfig, NamedHttpFilterConfigFactory>
+static Registry::RegisterFactory<ExampleDecoderEncoderFilterConfig, NamedHttpFilterConfigFactory>
     register_;
 
 } // namespace Configuration
